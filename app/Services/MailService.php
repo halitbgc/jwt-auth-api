@@ -14,12 +14,12 @@ class MailService
         $mail = new PHPMailer(true);
 
         try {
-            // SMTP ayarları
+            // SMTP settings
             $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com'; // SMTP sunucusu
+            $mail->Host       = 'smtp.gmail.com'; // SMTP server
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'halitbagci88@gmail.com'; // Gönderen email
-            $mail->Password   = 'awskqgwpcvzogwnk';     // Gmail app password
+            $mail->Username   = 'halitbagci88@gmail.com';
+            $mail->Password   = 'awskqgwpcvzogwnk'; 
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
@@ -27,13 +27,13 @@ class MailService
             $mail->addAddress($to);
 
             $mail->isHTML(true);
-            $mail->Subject = 'Şifre Sıfırlama Kodu';
-            $mail->Body    = "<b>Doğrulama Kodun:</b> {$code}";
+            $mail->Subject = 'Password Reset Code';
+            $mail->Body    = "<b>Your Verification Code:</b> {$code}";            
 
             $mail->send();
             return true;
         } catch (Exception $e) {
-            // Hata varsa loglayabilirsin
+            // Exception 
             return false;
         }
     }

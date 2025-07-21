@@ -30,12 +30,6 @@ switch ($route) {
     case '/reset-password:POST':
         $data = json_decode(file_get_contents("php://input"), true);
 
-        if (!isset($data['newPassword']) || !isset($data['oldPassword'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Password ve newpassword zorunlu alan']);
-            exit;
-        }
-
         (new AuthMiddleware)->handle(function () use ($data) {
             (new UserController)->resetPassword($data['oldPassword'], $data['newPassword']);
         });
