@@ -17,13 +17,14 @@ class User
 
     public function create(array $data): bool
     {
-        $stmt = $this->db->prepare("INSERT INTO users (name, surname, username, password, tc) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO users (name, surname, username, password, tc, email) VALUES (?, ?, ?, ?, ?, ?)");
         return $stmt->execute([
             $data['name'],
             $data['surname'],
             $data['username'],
             $data['password'],
             $data['tc'],
+            $data['email'],
             ]);
     }  
 
