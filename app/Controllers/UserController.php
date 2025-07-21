@@ -2,15 +2,14 @@
 
 namespace App\Controllers;
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use App\Models\User;
 use App\Models\PasswordReset;
 use App\Services\MailService;
 use Firebase\JWT\JWT;
 
 
-require_once __DIR__ . '/../Services/MailService.php';
-require_once __DIR__ . '/../Models/User.php';
-require_once __DIR__ . '/../Models/PasswordReset.php';
 
 class UserController
 {
@@ -45,6 +44,11 @@ class UserController
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             http_response_code(401);
             echo json_encode(['error' => 'Geçersiz e-posta adresi']);
+            return;
+        }
+        if ((strlen($data['password'])) > 8) {
+            http_response_code(401);
+            echo json_encode(['error'=> 'Sifre en az 8 karakter olmali']);
             return;
         }
 
@@ -109,6 +113,7 @@ class UserController
     }
 
     public function resetPassword(string $oldPassword, string $newPassword) {
+
         $user = new User();
         $data = $user->findById($_REQUEST['user_id']);
 
@@ -159,7 +164,7 @@ class UserController
         
         $user = new User();
         $dbdata = $user->findByTc($tc);
-        // tc ile username kiyasla
+        // TC ile database kayıtlı username tc sı kıyasla
         if (!($dbdata['username'] === $username)) { 
             http_response_code(400);
             echo json_encode(["error"=> "Bilgiler eslesmiyor "]);
