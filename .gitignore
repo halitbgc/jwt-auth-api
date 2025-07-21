@@ -1,0 +1,34 @@
+# Composer
+/vendor/
+composer.lock
+
+# Dotenv (şifreli bilgiler burada olur)
+/.env
+
+# Docker container volume'ları ve geçici dosyalar
+docker-compose.override.yml
+*.pid
+*.log
+*.sock
+
+# IDE/editor dosyaları
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# MacOS
+.DS_Store
+
+# Linux ve diğer OS geçici dosyalar
+*.swp
+*.bak
+*.tmp
+
+# Test veya cache
+/cache/
+.phpunit.result.cache
+
+# Diğer
+node_modules/
+coverage/

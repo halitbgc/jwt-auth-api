@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Models;
+use App\Config\Database;
+
+use PDO;
+
+class User
+{
+    private $db;
+
+    public function __construct()
+    {
+        require_once __DIR__ . '/../config/database.php'; // 🔥 ÇALIŞIR
+        $this->db = Database::getConnection();
+    }
+
+    public function create(array $data): bool
+    {
+        $stmt = $this->db->prepare("INSERT INTO users (name, surname, username, password, tc) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([
+            $data['name'],
+            $data['surname'],
+            $data['username'],
+            $data['password'],
+            $data['tc'],
+            ]);
+    }  
+
+    public function resetPassword(string $newPassword, int $id): bool
+    {
+        // Şifre güncelle
+        $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+
+        $result = $stmt->execute([
+            $newPassword,
+            $id
+        ]);
+    
+        return $result;
+    }
+
+    public function resetUsername(string $newUsername, int $id): bool {
+        $stmt = $this->db->prepare("UPDATE users SET username = ? WHERE id = ?");
+        $result = $stmt->execute(
+            [$newUsername, $id]
+        );
+        return $result;
+    }
+
+    public function findById($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    public function findByUsername(string $username)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function findByTc(string $tc) 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE tc = ?");
+        $stmt->execute([$tc]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
