@@ -5,17 +5,23 @@ use PDO;
 
 class Database
 {
+    private static ?PDO $instance = null;
+
+    private function __construct() {}
+
     public static function getConnection(): PDO
     {
-        $host = 'postgres';
-        $db   = 'auth_db';
-        $user = 'user';
-        $pass = 'password';
+        if (self::$instance === null) {
+            $host = 'postgres';
+            $db   = 'auth_db';
+            $user = 'user';
+            $pass = 'password';
 
-        $dsn = "pgsql:host=$host;port=5432;dbname=$db;user=$user;password=$pass";
+            $dsn = "pgsql:host=$host;port=5432;dbname=$db;user=$user;password=$pass";
+            self::$instance = new PDO($dsn);
+            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
 
-        $pdo = new PDO($dsn);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $pdo;
+        return self::$instance;
     }
 }
