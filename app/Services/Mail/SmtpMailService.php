@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Mail;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-class MailService
+class SmtpMailService implements MailServiceInterface
 {
-    public static function sendCode(string $to, string $code): bool
+    public function send(string $to, string $subject, string $body): bool
     {
         $mail = new PHPMailer(true);
         try {
-            
             // SMTP settings
             $mail->isSMTP();
             $mail->Host       = env('MAIL_HOST');       // SMTP server address
@@ -23,12 +22,11 @@ class MailService
             $mail->SMTPSecure = env('MAIL_ENCRYPTION'); // Encryption type
             $mail->Port       = env('MAIL_PORT');       // SMTP port
 
-            $mail->setFrom(env('MAIL_USERNAME'), 'PHP project');
+            $mail->setFrom(env('MAIL_USERNAME'), 'PHP App');
             $mail->addAddress($to);
-
             $mail->isHTML(true);
-            $mail->Subject = 'Password Reset Code';
-            $mail->Body    = "<b>Your Verification Code:</b> {$code}";            
+            $mail->Subject = $subject;
+            $mail->Body    = $body;            
 
             $mail->send();
             return true;

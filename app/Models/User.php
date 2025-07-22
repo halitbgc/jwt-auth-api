@@ -63,7 +63,7 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function findByTc(string $tc) 
+    public function findByTc(string $tc) :mixed
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE tc = ?");
         $stmt->execute([$tc]);

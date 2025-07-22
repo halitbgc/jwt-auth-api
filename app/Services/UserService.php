@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\PasswordReset;
+use App\Services\Mail\MailServiceFactory;
+use App\Services\Mail\MailServiceInterface;
 use Firebase\JWT\JWT;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -154,9 +156,12 @@ class UserService {
         $expiresAt = date('Y-m-d H:i:s', time() + (60 * 5)); // Valid for 5 minutes
 
         $this->passwordResetModel->create($dbdata['id'], $code, $expiresAt);
+        
+
+        $mailService = MailServiceFactory::create(); // Create MailService instance
 
         // Send verification code
-        if (MailService::sendCode($dbdata['email'], $code)) {
+        if ($mailService->send($dbdata['email'],"Password Reset Code", "<b>Your Verification Code:</b> {$code}")) {
             return ['success' => true, 'message' => 'Verification code generated and sent to the registered email address'];
         } else {
             return ['success' => false, 'message' => 'Verification code could not be sent'];
