@@ -11,7 +11,7 @@ class User
 
     public function __construct()
     {
-        require_once __DIR__ . '/../config/database.php'; // 🔥 ÇALIŞIR
+        require_once __DIR__ . '/../config/database.php';
         $this->db = Database::getConnection();
     }
 
@@ -30,7 +30,7 @@ class User
 
     public function resetPassword(string $newPassword, int $id): bool
     {
-        // Şifre güncelle
+        // Update password
         $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
 
         $result = $stmt->execute([
@@ -49,14 +49,14 @@ class User
         return $result;
     }
 
-    public function findById($id)
+    public function findById($id):mixed
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
-    public function findByUsername(string $username)
+    public function findByUsername(string $username):mixed
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);

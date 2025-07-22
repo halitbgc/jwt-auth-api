@@ -4,11 +4,7 @@ namespace App\Controllers;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Models\User;
 use App\Services\UserService;
-use App\Models\PasswordReset;
-use App\Services\MailService;
-
 
 class UserController
 {
@@ -65,7 +61,6 @@ class UserController
     }
 
     public function forgotPassword(string $tc, string $username) {
-
         $result = $this->userService->forgotPassword($tc, $username);
 
         if ($result['success']) {

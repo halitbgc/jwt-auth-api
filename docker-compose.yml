@@ -7,12 +7,10 @@ services:
     container_name: php_app
     volumes:
       - ./app:/var/www/html
-      - ./scripts:/var/www/html/scripts
-      - ./config:/var/www/html/config
+      - .env:/var/www/html/.env
     depends_on:
       - postgres
       - redis
-
 
   nginx:
     image: nginx:alpine

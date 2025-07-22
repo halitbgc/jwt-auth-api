@@ -3,7 +3,7 @@
 composer.lock
 
 # Dotenv (şifreli bilgiler burada olur)
-/.env
+.env
 
 # Docker container volume'ları ve geçici dosyalar
 docker-compose.override.yml

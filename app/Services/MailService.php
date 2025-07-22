@@ -12,18 +12,18 @@ class MailService
     public static function sendCode(string $to, string $code): bool
     {
         $mail = new PHPMailer(true);
-
         try {
+            
             // SMTP settings
             $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com'; // SMTP server
+            $mail->Host       = env('MAIL_HOST');       // SMTP server address
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'halitbagci88@gmail.com';
-            $mail->Password   = 'awskqgwpcvzogwnk'; 
-            $mail->SMTPSecure = 'tls';
-            $mail->Port       = 587;
+            $mail->Username   = env('MAIL_USERNAME');   // Your mail adress
+            $mail->Password   = env('MAIL_PASSWORD');   // Your mail password
+            $mail->SMTPSecure = env('MAIL_ENCRYPTION'); // Encryption type
+            $mail->Port       = env('MAIL_PORT');       // SMTP port
 
-            $mail->setFrom('halitbagci88@gmail.com', 'PHP project');
+            $mail->setFrom(env('MAIL_USERNAME'), 'PHP project');
             $mail->addAddress($to);
 
             $mail->isHTML(true);
