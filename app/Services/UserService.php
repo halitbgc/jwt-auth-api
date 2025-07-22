@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\PasswordReset;
 use App\Services\Mail\MailServiceFactory;
-use App\Services\Mail\MailServiceInterface;
 use Firebase\JWT\JWT;
 
 require_once __DIR__ . '/../vendor/autoload.php';

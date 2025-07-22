@@ -8,7 +8,7 @@ class MailServiceFactory
 {
     public static function create(): MailServiceInterface
     {
-        $driver = getenv('MAIL_DRIVER') ?: 'smtp';
+        $driver = env('MAIL_DRIVER') ?: 'smtp';
 
         return match ($driver) {
             'smtp' => new SmtpMailService(),
