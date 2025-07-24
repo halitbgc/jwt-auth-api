@@ -14,24 +14,24 @@ Bu proje, PHP ile JWT tabanlı kullanıcı kimlik doğrulama işlemlerini gerçe
 ---
 
 ## 📁 Proje Yapısı
-
+```
 app/
 ├── Controllers/ # HTTP işlemleri
-├── Middleware/ # JWT, RateLimit gibi kontroller
-├── Models/ # DB işlemleri (User, PasswordReset)
+├── Middleware/  # JWT, RateLimit gibi kontroller
+├── Models/      # DB işlemleri (User, PasswordReset)
 ├── Services/
-│ ├── Mail/ # SMTP, AWS MailService + Factory
+│ ├── Mail/      # SMTP, AWS MailService + Factory
 │ └── UserService.php # İş mantığı burada
-├── Routes/ # web.php (endpoint tanımları)
-├── helpers/ # Yardımcı fonksiyonlar
+├── Routes/      # web.php (endpoint tanımları)
+├── helpers/     # Yardımcı fonksiyonlar
 config/
 ├── database.php # PDO bağlantısı
 docker/
-├── php/ # Dockerfile
-├── nginx/ # Nginx config
-.env # Ortam değişkenleri
+├── php/         # Dockerfile
+├── nginx/       # Nginx config
+.env             # Ortam değişkenleri
 docker-compose.yml
-
+```
 
 ---
 
@@ -42,21 +42,30 @@ docker-compose.yml
 ```bash
 git clone https://github.com/kullaniciadi/jwt-auth-api.git
 cd jwt-auth-api
+```
 
 ### 2. .env Dosyasını Oluştur
-
-# SMTP
+```
 MAIL_DRIVER = 'smtp'
 MAIL_HOST = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USERNAME = 'example@gmail.com'
 MAIL_PASSWORD = 'apppassword'
 MAIL_ENCRYPTION = 'tls'
+```
 
 ### 3. Dockor Compose Başlat
+```bash
 docker-compose up --build
+```
 
 ### 4. PostgreSQL'e Bağlan ve Tabloları Oluştur
+PostgreSQL konteynerine bağlandıktan sonra, aşağıdaki SQL sorgularını çalıştırarak gerekli tabloları oluşturabilirsiniz.
+```bash
+docker exec -it postgres_db psql -U user -d auth_db
+```
+
+```sql
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(100) NOT NULL,
@@ -76,6 +85,7 @@ CREATE TABLE password_reset_codes (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   expires_at TIMESTAMP
 );
+```
 
 ## 📦 Katkı
 Katkı yapmak isterseniz PR gönderebilir veya issue açabilirsiniz.
