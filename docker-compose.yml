@@ -8,6 +8,7 @@ services:
     volumes:
       - ./app:/var/www/html
       - .env:/var/www/html/.env
+      - ./config:/var/www/html/config 
     depends_on:
       - postgres
       - redis

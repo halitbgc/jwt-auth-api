@@ -5,8 +5,7 @@ use App\Middleware\AuthMiddleware;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-
-$uri = $_SERVER['REQUEST_URI'];
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 $route = $uri . ':' . $method;
 
@@ -25,6 +24,11 @@ switch ($route) {
     case '/register:POST':
         $data = json_decode(file_get_contents("php://input"), true);
         (new UserController)->register($data);
+        exit;
+    
+    case '/verify-email:GET':
+        $token = $_GET['token'];
+        (new UserController)->verifyEmail($token);
         exit;
 
     case '/reset-password:POST':

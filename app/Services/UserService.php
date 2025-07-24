@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\PasswordReset;
 use App\Services\Mail\MailServiceFactory;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -63,11 +64,54 @@ class UserService {
 
         // Register user
         if ($this->userModel->create($data)) {
-            return ['success' => true, 'message' => 'Registration successful'];
+            $user = $this->userModel->findByUsername($data['username']);
+
+              // Email verification token üret
+            $payload = [
+                'sub' => $user['id'],
+                'exp' => time() + (60 * 60 * 24) // 24 saat geçerli
+            ];
+            $token = JWT::encode($payload, 'secret_key', 'HS256');
+
+            // Email gönder
+            $mailService = MailServiceFactory::create();
+            $verificationLink = "https://localhost:8080/verify-email?token={$token}";
+            $mailService->send($data['email'], 'Verify Your Email', "Click here to verify: <a href='{$verificationLink}'>Verify</a>");
+
+            return ['success' => true, 'message' => 'Registration successful. Please verify your email.'];
         }
 
         return ['success' => false, 'message' => 'Registration failed. Please try again later.'];
     }
+
+    public function verifyEmail(string $token): array
+    {
+        if (!isset($token)) {
+            return ['success' => false, 'message' => 'Token is missing'];
+        }
+
+        try {
+            $payload = JWT::decode($token, new Key('secret_key', 'HS256'));
+            $userId = $payload->sub;
+
+            $user = $this->userModel->findById($userId);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+
+            if ($user['verified']) {
+                return ['success' => false, 'message' => 'Email already verified'];
+            }
+
+            $this->userModel->markAsVerified($userId);
+
+            return ['success' => true, 'message' => 'Email verified successfully'];
+        } catch (\Exception $e) 
+        {
+            return ['success' => false, 'message' => 'Invalid or expired token'];
+        }
+    }
+
 
     public function login(string $username, string $password):array
     {
@@ -80,6 +124,10 @@ class UserService {
         if (!password_verify($password, $user['password'])) {
             http_response_code(401);
             return['success' => false, 'message' => 'Incorrect password!'];
+        }
+
+        if (!$user['verified']) {
+            return ['success' => false, 'message' => 'Email not verified. Please check your inbox.'];
         }
 
         // Generate JWT token
@@ -104,6 +152,10 @@ class UserService {
     public function resetPassword(string $oldPassword, string $newPassword):array {
 
         $data = $this->userModel->findById($_REQUEST['user_id']);
+
+        if (!$data['verified']) {
+            return ['success'=> false,'message'=> 'Email not verified. Please verify your email before resetting the password.'];
+        }
 
         // Required field check
         if (!isset($oldPassword) || !isset($newPassword)) {
@@ -149,6 +201,10 @@ class UserService {
         if (!($dbdata['username'] === $username)) { 
             http_response_code(400);
             return ["success"=> false, 'message' => "Information does not match"];
+        }
+
+        if (!$dbdata['verified']) {
+            return ['success'=> false,'message'=> 'Email not verified. Please verify your email before resetting the password.'];
         }
 
         $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // 6 digits
@@ -197,15 +253,20 @@ class UserService {
     }
 
     public function resetUsername (string $newUsername, string $password) {
-        $data = $this->userModel->findById($_REQUEST['user_id']);
 
         if (empty($newUsername) || empty($password)) {
             return ['success' => false, 'message'=> 'Fields cannot be empty'];
         }
 
+        $data = $this->userModel->findById($_REQUEST['user_id']);
+
         // Password verification
         if(!password_verify($password, $data['password'])) {
             return ['success' => false,  'message' => "Password is incorrect"];
+        }
+
+        if (!$data['verified']) {
+            return ['success'=> false,'message'=> 'Email not verified. Please verify your email before resetting the password.'];
         }
 
         if (!strlen($newUsername) > 0) { 

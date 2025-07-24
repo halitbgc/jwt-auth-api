@@ -28,6 +28,11 @@ class User
             ]);
     }  
 
+    public function markAsVerified(int $id): bool{
+        $stmt = $this->db->prepare("UPDATE users SET verified = 't' WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
     public function resetPassword(string $newPassword, int $id): bool
     {
         // Update password

@@ -34,6 +34,18 @@ class UserController
         echo json_encode(['message' => $result['message']]);
     }
 
+    public function verifyEmail($token) {
+        $result = $this->userService->verifyEmail($token);
+
+        if ($result['success']) {
+            http_response_code(201);
+        } else {
+            http_response_code(400);
+        }
+
+        echo json_encode(['message' => $result['message']]);
+    }
+
     public function login(string $username, string $password)
     {
         $result = $this->userService->login($username, $password);
