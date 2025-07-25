@@ -74,6 +74,7 @@ CREATE TABLE users (
   password TEXT NOT NULL,
   tc VARCHAR(11),
   email VARCHAR(255),
+  verified BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
