@@ -75,7 +75,7 @@ class UserService {
 
             // Email gönder
             $mailService = MailServiceFactory::create();
-            $verificationLink = "https://localhost:8080/verify-email?token={$token}";
+            $verificationLink = "http://localhost:5173/verify-email?token={$token}";
             $mailService->send($data['email'], 'Verify Your Email', "Click here to verify: <a href='{$verificationLink}'>Verify</a>");
 
             return ['success' => true, 'message' => 'Registration successful. Please verify your email.'];

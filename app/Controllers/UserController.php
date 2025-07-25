@@ -52,7 +52,7 @@ class UserController
 
         if ($result['success']) {
             http_response_code(200);
-            echo json_encode(['token' => $result['token']]);
+            echo json_encode(["message" => 'Login successful','token' => $result['token']]);
         } else {
             http_response_code(400);
             echo json_encode(['error' => $result['message']]);
