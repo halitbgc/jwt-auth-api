@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\PasswordReset;
+use App\Models\RefreshToken;
 use App\Services\Mail\MailServiceFactory;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -139,9 +140,37 @@ class UserService {
         ];
 
         $jwt = JWT::encode($payload, 'secret_key', 'HS256'); // secret_key should be stored securely
+        $refreshToken = $this->generateRefreshToken($user['id']);
 
-        return['success' => true, 'token' => $jwt];
+        return['success' => true, 'access_token' => $jwt, 'refresh_token' => $refreshToken];
     }
+
+    public function refreshAccessToken(string $refreshToken):array {
+        if (empty($refreshToken)) {
+            return ['success' => false, 'message' => 'Refresh token is required'];
+        }
+
+        $model = new RefreshToken();
+        $tokenData = $model->findValid($refreshToken);
+    
+        if (!$tokenData) {
+            return ['success' => false, 'message' => 'Invalid or expired refresh token'];
+        }
+    
+        $userId = $tokenData['user_id'];
+    
+        $payload = [
+            'iss' => 'localhost',
+            'sub' => $userId,
+            'iat' => time(),
+            'exp' => time() + (60 * 60)
+        ];
+    
+        $accessToken = JWT::encode($payload, 'secret_key', 'HS256');
+        
+        return ['success' => true, 'token' => $accessToken];
+    }
+    
 
     public function getProfile(): array
     {
@@ -285,5 +314,14 @@ class UserService {
         else {
             return['success' => false, 'message' => 'An error occurred during reset'];
         }
+    }
+    private function generateRefreshToken($userId) {
+        $token = bin2hex(random_bytes(64)); // rastgele ve güçlü
+        $expiresAt = date('Y-m-d H:i:s', time() + (60 * 60 * 24 * 7)); // 7 gün
+    
+        $refreshTokenModel = new RefreshToken();
+        $refreshTokenModel->store($userId, $token, $expiresAt);
+    
+        return $token;
     }
 }

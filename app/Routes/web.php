@@ -67,6 +67,11 @@ switch ($route) {
         $data = json_decode(file_get_contents("php://input"), true);
         (new UserController)->resetPasswordWithCode($data['username'], $data['tc'], $data['code'], $data['newPassword']);
         break;
+    
+    case '/token_refresh:POST':
+        $data = json_decode(file_get_contents("php://input"), true);
+        (new UserController)->refreshAccessToken($data['refresh_token']);
+        break;
 
     default:
         http_response_code(404);

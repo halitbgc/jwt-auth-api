@@ -52,7 +52,7 @@ class UserController
 
         if ($result['success']) {
             http_response_code(200);
-            echo json_encode(["message" => 'Login successful','token' => $result['token']]);
+            echo json_encode(["message" => 'Login successful','access_token' => $result['access_token'], 'refresh_token' => $result['refresh_token']]);
         } else {
             http_response_code(400);
             echo json_encode(['error' => $result['message']]);
@@ -109,4 +109,15 @@ class UserController
         }
     }
 
+    public function refreshAccessToken(string $refresh_token) {
+        
+        $result = $this->userService->refreshAccessToken($refresh_token);
+        if ($result['success']) {
+            http_response_code(200);
+            echo json_encode(['token' => $result['token']]);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => $result['message']]);
+        }
+    }
 }
