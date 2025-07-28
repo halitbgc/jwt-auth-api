@@ -65,7 +65,7 @@ switch ($route) {
 
     case '/resetPasswordWithCode:POST':
         $data = json_decode(file_get_contents("php://input"), true);
-        (new UserController)->resetPasswordWithCode($data['username'], $data['code'], $data['newPassword']);
+        (new UserController)->resetPasswordWithCode($data['username'], $data['tc'], $data['code'], $data['newPassword']);
         break;
 
     default:

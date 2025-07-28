@@ -84,9 +84,9 @@ class UserController
         }
     }
 
-    public function resetPasswordWithCode(string $username, string $code, string $newPassword) {
+    public function resetPasswordWithCode(string $username, string $tc, string $code, string $newPassword) {
         
-        $result = $this->userService->resetPasswordWithCode($username, $code, $newPassword);
+        $result = $this->userService->resetPasswordWithCode($username, $tc,  $code, $newPassword);
 
         if ($result['success']) {
             http_response_code(200);

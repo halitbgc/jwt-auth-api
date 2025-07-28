@@ -12,7 +12,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 class UserService {
 
-    private $userModel;
+    private $userModel; 
     private $passwordResetModel;
 
     public function __construct()
@@ -223,16 +223,20 @@ class UserService {
         }
     }
 
-    public function resetPasswordWithCode(string $username, string $code, string $newPassword) {
-        if (empty($username) || empty($code) || empty($newPassword)) {
+    public function resetPasswordWithCode(string $username, string $tc, string $code, string $newPassword) {
+        if (empty($username) || empty($tc)  || empty($code) || empty($newPassword)) {
             return ['success' => false, 'message'=> 'Fields cannot be empty'];
         }
 
-        $user = $this->userModel->findByUsername($username);
+        $user = $this->userModel->findByTc($tc);
 
         if (!$user) {
             http_response_code(404);
             return ['succes' => false , 'message' => 'User not found'];
+        }
+        if ($user['username'] != $username){
+            http_response_code(400);
+            return ['success' => false, 'message' => 'Username does not match the registered TC number'];
         }
 
         $reset = $this->passwordResetModel->findValidCode($user['id'], $code); // May already be used
